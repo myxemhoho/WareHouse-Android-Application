@@ -1,5 +1,6 @@
 package com.example.osamahqawasmeh.nzwhsapp;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
@@ -14,8 +15,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.ResponseHandlerInterface;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cz.msebera.android.httpclient.Header;
 
 public class SignUp_Fragment extends Fragment implements OnClickListener {
     private static View view;
@@ -132,6 +139,19 @@ public class SignUp_Fragment extends Fragment implements OnClickListener {
         else
             Toast.makeText(getActivity(), "Do SignUp.", Toast.LENGTH_SHORT)
                     .show();
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.post("http://192.168.8.1/api/register", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("EXTRA_MESSAGE", "SUCCESS REGISTRATION");
+                    startActivity(intent);
+                }
 
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    new CustomToast().Show_Toast(getActivity(), view, "Registration Failed");
+                }
+            });
     }
 }

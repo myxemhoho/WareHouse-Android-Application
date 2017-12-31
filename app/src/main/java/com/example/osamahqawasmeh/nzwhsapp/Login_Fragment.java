@@ -1,8 +1,10 @@
 package com.example.osamahqawasmeh.nzwhsapp;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.InputType;
@@ -25,6 +27,10 @@ import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.loopj.android.http.*;
+
+import cz.msebera.android.httpclient.Header;
 
 public class Login_Fragment extends Fragment implements OnClickListener {
     private static View view;
@@ -176,8 +182,48 @@ public class Login_Fragment extends Fragment implements OnClickListener {
                     "Your Email Id is Invalid.");
             // Else do login and do your stuff
         else
-            Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT)
-                    .show();
+//            Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT).show();
+        this.loginButton.setEnabled(false);
+        emailid.setEnabled(false);
+        password.setEnabled(false);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.post("http://192.168.8.1/api/login", new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+                // called before request is started
+                System.out.println("onStart");
+                new CustomToast().Show_Toast(getActivity(), view,
+                        "Start connecting to server.");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                new CustomToast().Show_Toast(getActivity(), view,
+                        "Successfully connected to server.");
+                Intent intent = new Intent(getActivity(), HomeActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                System.out.println("onFailure");
+                new CustomToast().Show_Toast(getActivity(), view,
+                        "Could't connect to server.");
+                loginButton.setEnabled(true);
+                emailid.setEnabled(true);
+                password.setEnabled(true);
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                System.out.println("onRetry");
+                new CustomToast().Show_Toast(getActivity(), view,
+                        "Retry connecting to server.");
+            }
+        });
 
     }
 }

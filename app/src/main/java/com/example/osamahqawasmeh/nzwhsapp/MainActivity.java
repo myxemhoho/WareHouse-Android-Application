@@ -1,11 +1,13 @@
 package com.example.osamahqawasmeh.nzwhsapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static FragmentManager fragmentManager;
@@ -15,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
+
+        Toast.makeText(MainActivity.this,  getIntent().getStringExtra("EXTRA_MESSAGE"), Toast.LENGTH_SHORT).show();
 
         // If savedinstnacestate is null then replace login fragment
         if (savedInstanceState == null) {
